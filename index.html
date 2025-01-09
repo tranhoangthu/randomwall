@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Pexels Background</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-size: cover;
+            background-position: center;
+            font-family: Arial, sans-serif;
+            color: white;
+        }
+
+        .overlay {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .overlay h1 {
+            margin: 0;
+        }
+
+        .overlay button {
+            margin-top: 15px;
+            padding: 10px 20px;
+            font-size: 16px;
+            color: white;
+            background-color: #007BFF;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .overlay button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="overlay">
+
+        <h1>Hình nền ngẫu nhiên!</h1>
+        <p>Tải lại trang sẽ xuất hiện hình khác nhau</p>
+        <p>Bạn có thể tải hình này về và làm hình nền !!</p>
+        <button onclick="location.reload();">Tải Lại Trang !</button>
+        <button id="downloadBtn">Tải Hình Nền Ngay !</button>
+    </div>
+
+    <script>
+        const pexelsKey = '8RKjsM7fHC15UGuSwLbn8a6wTpnos0OrrH31NKjFMcBqXudGCelk3W51'; // Replace with your Pexels API key
+        const endpoint = `https://api.pexels.com/v1/search?query=landscape+nature&per_page=80&page=${Math.floor(Math.random() * 10) + 1}`;
+        let currentBackgroundUrl = '';
+
+        async function setRandomBackground() {
+            try {
+                const response = await fetch(endpoint, {
+                    headers: {
+                        Authorization: pexelsKey
+                    }
+                });
+                const data = await response.json();
+                if (data && data.photos && data.photos.length > 0) {
+                    const randomIndex = Math.floor(Math.random() * data.photos.length);
+                    currentBackgroundUrl = data.photos[randomIndex].src.original;
+                    document.body.style.backgroundImage = `url('${currentBackgroundUrl}')`;
+                } else {
+                    console.error('Failed to fetch image from Pexels.');
+                }
+            } catch (error) {
+                console.error('Error fetching image:', error);
+            }
+        }
+
+        function downloadImage(url) {
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'background.jpg';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
+        document.getElementById('downloadBtn').addEventListener('click', () => {
+            if (currentBackgroundUrl) {
+                downloadImage(currentBackgroundUrl);
+            } else {
+                alert('Background not loaded yet. Please try again.');
+            }
+        });
+
+        setRandomBackground();
+    </script>
+
+
+
+</body>
+
+</html>
